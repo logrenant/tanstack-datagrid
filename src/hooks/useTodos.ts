@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useDataContext } from '../contexts/DataContext'
+
 import { Todo } from '../types'
+import { useDataContext } from '../contexts/DataContext'
 
 export const useTodos = () => {
   const queryClient = useQueryClient()
@@ -9,7 +10,7 @@ export const useTodos = () => {
   useQuery<Todo[]>({
     queryKey: ['todos'],
     queryFn: () =>
-      fetch('https://caab1a6b08f0cda2301b.free.beeceptor.com/api/todos/')
+      fetch('https://ca6cfec187b154566f22.free.beeceptor.com/api/tanstack-todo/')
         .then(res => res.json())
         .then(data => {
           setTodos(data)
@@ -19,7 +20,7 @@ export const useTodos = () => {
 
   const createTodo = useMutation<Todo, Error, Todo>({
     mutationFn: async (newTodo: Todo) => {
-      const response = await fetch('https://caab1a6b08f0cda2301b.free.beeceptor.com/api/todos/', {
+      const response = await fetch('https://ca6cfec187b154566f22.free.beeceptor.com/api/tanstack-todo/', {
         method: 'POST',
         body: JSON.stringify(newTodo),
         headers: {
@@ -41,10 +42,10 @@ export const useTodos = () => {
   })
 
   const updateTodo = useMutation<Todo, Error, Todo>({
-    mutationFn: async (updatedPost: Todo) => {
-      const response = await fetch(`https://caab1a6b08f0cda2301b.free.beeceptor.com/api/todos/${updatedPost.id}`, {
+    mutationFn: async (updatedTodo: Todo) => {
+      const response = await fetch(`https://ca6cfec187b154566f22.free.beeceptor.com/api/tanstack-todo/${updatedTodo.id}`, {
         method: 'PUT',
-        body: JSON.stringify(updateTodo),
+        body: JSON.stringify(updatedTodo),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
@@ -57,7 +58,7 @@ export const useTodos = () => {
       return response.json() as Promise<Todo>
     },
     onSuccess: (data: Todo) => {
-      queryClient.setQueryData<Todo[]>(['posts'], (old) =>
+      queryClient.setQueryData<Todo[]>(['todos'], (old) =>
         old ? old.map(todo => todo.id === data.id ? data : todo) : []
       )
     },
@@ -65,7 +66,7 @@ export const useTodos = () => {
 
   const deleteTodo = useMutation({
     mutationFn: (id: number) =>
-      fetch(`https://caab1a6b08f0cda2301b.free.beeceptor.com/api/todos/${id}`, {
+      fetch(`https://ca6cfec187b154566f22.free.beeceptor.com/api/tanstack-todo/${id}`, {
         method: 'DELETE',
       }),
     onSuccess: (_, id) => {
