@@ -1,17 +1,18 @@
 import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, TextField, Container, Box, Typography } from '@mui/material'
+
 import { AuthContext } from '../contexts/AuthContext'
 
 export const Login = () => {
-    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const { login } = useContext(AuthContext)
     const navigate = useNavigate()
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        login({ email, password })
+        login({ username, password })
         navigate('/posts')
     }
 
@@ -21,11 +22,11 @@ export const Login = () => {
                 <Typography variant="h4" gutterBottom>Login</Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
-                        label="Email"
+                        label="Username"
                         fullWidth
                         margin="normal"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                     />
                     <TextField

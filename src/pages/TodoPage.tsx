@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridRowId, useGridApiRef } from '@mui/x-data-grid'
 import { Button, Box, Dialog, DialogTitle, DialogContent, TextField } from '@mui/material'
-import { useDataContext } from '../contexts/DataContext'
-import { useTodos } from '../hooks/useTodos'
+
 import { Todo } from '../types'
+import { useTodos } from '../hooks/useTodos'
+import { useDataContext } from '../contexts/DataContext'
 
 export const TodoPage = () => {
     const { todos, setTodos } = useDataContext()
@@ -11,6 +12,7 @@ export const TodoPage = () => {
     const [open, setOpen] = useState(false)
     const [newTodo, setNewTodo] = useState({ title: '', body: '' })
     const [dataGridKey, setDataGridKey] = useState(0)
+    const apiRef = useGridApiRef();
 
     useEffect(() => {
         setDataGridKey(prevKey => prevKey + 1)
@@ -23,23 +25,36 @@ export const TodoPage = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 150,
-            renderCell: (params: { row: Todo }) => (
-                <Button
-                    color="error"
-                    onClick={async () => {
-                        try {
-                            await deleteTodo.mutateAsync(params.row.id)
-                            setTodos(todos.filter(todo => todo.id !== params.row.id))
-                        } catch (error) {
-                            console.error('Silme işlemi başarısız:', error)
-                        }
-                    }}
-                >
-                    Delete
-                </Button>
-            )
-        }
+            width: 200,
+            renderCell: (params) => (
+                <div>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleEditClick(params.id)}
+                        style={{ marginRight: 8 }}
+                    >
+                        Update
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        onClick={async () => {
+                            try {
+                                await deleteTodo.mutateAsync(params.row.id);
+                                setTodos(todos.filter((todo) => todo.id !== params.row.id));
+                            } catch (error) {
+                                console.error('Delete operation failed:', error);
+                            }
+                        }}
+                    >
+                        Delete
+                    </Button>
+                </div>
+            ),
+        },
     ]
 
     const handleProcessRowUpdate = async (newRow: Todo, oldRow: Todo) => {
@@ -48,9 +63,14 @@ export const TodoPage = () => {
             setTodos(todos.map(todo => todo.id === updatedRow.id ? updatedRow : todo))
             return updatedRow
         } catch (error) {
-            return oldRow
+            console.error('Güncelleme işlemi başarısız:', error);
+            return oldRow;
         }
     }
+
+    const handleEditClick = (id: GridRowId) => {
+        apiRef.current.startRowEditMode({ id });
+    };
 
     const handleCreateTodo = async () => {
         const newId = todos.length > 0 ? Math.max(...todos.map(p => p.id)) + 1 : 1
@@ -74,6 +94,8 @@ export const TodoPage = () => {
             <DataGrid
                 key={dataGridKey}
                 rows={todos}
+                editMode="row"
+                apiRef={apiRef}
                 columns={columns}
                 processRowUpdate={handleProcessRowUpdate}
             />

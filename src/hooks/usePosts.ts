@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useDataContext } from '../contexts/DataContext'
+
 import { Post } from '../types'
+import { useDataContext } from '../contexts/DataContext'
 
 export const usePosts = () => {
   const queryClient = useQueryClient()
@@ -9,7 +10,7 @@ export const usePosts = () => {
   useQuery<Post[]>({
     queryKey: ['posts'],
     queryFn: () =>
-      fetch('https://ca2170d3a0958cbb6457.free.beeceptor.com/api/posts/')
+      fetch('https://ca181281759653a5d078.free.beeceptor.com/api/tanstack-posts/')
         .then(res => res.json())
         .then(data => {
           setPosts(data)
@@ -19,7 +20,7 @@ export const usePosts = () => {
 
   const createPost = useMutation<Post, Error, Post>({
     mutationFn: async (newPost: Post) => {
-      const response = await fetch('https://ca2170d3a0958cbb6457.free.beeceptor.com/api/posts/', {
+      const response = await fetch('https://ca181281759653a5d078.free.beeceptor.com/api/tanstack-posts/', {
         method: 'POST',
         body: JSON.stringify(newPost),
         headers: {
@@ -42,7 +43,7 @@ export const usePosts = () => {
 
   const updatePost = useMutation<Post, Error, Post>({
     mutationFn: async (updatedPost: Post) => {
-      const response = await fetch(`https://ca2170d3a0958cbb6457.free.beeceptor.com/api/posts/${updatedPost.id}`, {
+      const response = await fetch(`https://ca181281759653a5d078.free.beeceptor.com/api/tanstack-posts/${updatedPost.id}`, {
         method: 'PUT',
         body: JSON.stringify(updatedPost),
         headers: {
@@ -65,7 +66,7 @@ export const usePosts = () => {
 
   const deletePost = useMutation({
     mutationFn: (id: number) =>
-      fetch(`https://ca2170d3a0958cbb6457.free.beeceptor.com/api/posts/${id}`, {
+      fetch(`https://ca181281759653a5d078.free.beeceptor.com/api/tanstack-posts/${id}`, {
         method: 'DELETE',
       }),
     onSuccess: (_, id) => {

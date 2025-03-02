@@ -2,7 +2,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 
 type AuthContextType = {
     user: string | null
-    login: (credentials: { email: string; password: string }) => void
+    login: (credentials: { username: string; password: string }) => void
     logout: () => void
     isCheckingAuth: boolean
 }
@@ -26,12 +26,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return () => window.removeEventListener('storage', checkAuth)
     }, [])
 
-    const login = ({ email }: { email: string; password: string }) => {
-        setUser(email)
-        localStorage.setItem('user', email)
+    const login = ({ username }: { username: string; password: string }) => {
+        setUser(username)
+        localStorage.setItem('user', username)
     }
-
-    console.log(user)
 
     const logout = () => {
         setUser(null)
